@@ -139,7 +139,7 @@ In this paper, the **log return**(which will be used interchangeably with **retu
 $$
 r_t = log(\frac{P_{t+1}}{P_t})  \label{eq1}
 $$  
-Where $P_{t+1}$ and $P_{t+1}$ represent the price of the index at time $t$ and $t+1$ respectively.
+Where $P_t$ and $P_{t+1}$ represent the price of the index at time $t$ and $t+1$ respectively.
 
 #Methodology
 
