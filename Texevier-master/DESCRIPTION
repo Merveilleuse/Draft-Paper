@@ -1,0 +1,27 @@
+Package: Texevier
+Type: Package
+Title: Texevier: Create Formal written documents with the Elsevier format using R
+Version: 0.1.0
+Authors@R: person("Nico", "Katzke", email = "nfkatzke@gmail.com", role = c("aut", "cre"))
+ctb: Nicolaas Odendaal
+Maintainer: Nico Katzke <nfkatzke@gmail.com>
+Depends:
+    R (>= 3.2.1)
+Imports:
+	tidyverse,
+    ggplot2,
+    rmarkdown,
+    knitr,
+    xtable,
+    ggthemes,
+	readr
+Suggests:
+	xts
+Description: This package provides users with a quick means of setting up
+    the standard accepted academic paper layout in the Elsevier format. Users will have to have
+    Latex installed first, as well as the latest rmarkdown version and Rstudio. This package
+	creates an easily useable template for doing formal write-ups in the Elsevier format.
+License: GPL-3
+LazyData: TRUE
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
