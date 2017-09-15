@@ -304,10 +304,10 @@ The challenge with many forecasting methods such as the Box-Jenkins
 methodology and machine-learning approaches are that they usually
 require a sufficient statistical background. Furthermore, these
 approaches tend to be inflexible with respect to incorporating prior
-information. Though this can be partially acheived by initializing
-parameter estimates for methods such as Artificial Neural Networks ,an
-analyst with no statistical training can have difficulty interpreting
-and thus modifying parameter estimates(Taylor and Letham 2017).\\
+information. Though this can be partially achieved by initializing
+parameter estimates for some methods (such as ANNs) ,an analyst with no
+statistical training can have difficulty interpreting and thus modifying
+parameter estimates(Taylor and Letham 2017).\\
 Prophet is an \textbf{automatic forecasting} tool that uses a Bayesian
 Generalized Additive model to generate time series forecasts. This is in
 comparison to conventional methods such as the linear stochastic
@@ -320,7 +320,7 @@ easily interpretable initial parameters that can be modified and
 interactive feedback when forecasts under-perform (Taylor and Letham
 2017).
 
-Through this mechanism, a large numer of forecasts can be reliably
+Through this mechanism, a large number of forecasts can be reliably
 generated \textbf{automatically} with the flexibility of enabling an
 analyst to modify the model in-the-loop during model specification. The
 automated forecasting procedure with an analyst-in-the-loop is
@@ -364,16 +364,15 @@ where the growth rate changes( i.e change points) and\\
 \(\bullet (b+\boldsymbol{a}(t)^T \gamma)\) is the adjusted offset
 parameter.
 
-The growth component of the model is generalized with two useful
-features that allow the carrying capacity and growth rate of the model
-to vary with time. The model enables an analyst to manually define when
-and how the growth rate changes at different change points (Taylor and
-Letham 2017). This feature is particularly useful for forecasting stock
-price data since analysts are able to incorporate market movements that
-lead to the growth rate either decreasing, increasing or remaining
-constant.\\
-The seasonality component, \(s(t)\) with periodicity \(P\) and is given
-by, \[s(t) = \sum_{n = -N}^{N}c_n \exp(j\frac{2\pi nt}{P})\]
+The growth component of the model has two useful features that allow the
+carrying capacity and growth rate of the model to vary with time. This
+enables an analyst to manually define when and how the growth rate
+changes at different change points (Taylor and Letham 2017). This
+feature is particularly useful for forecasting stock price data since
+analysts are able to incorporate market movements that lead to the
+growth rate either decreasing, increasing or becoming constant.\\
+The seasonality component, \(s(t)\) with periodicity \(P\) is given by,
+\[s(t) = \sum_{n = -N}^{N}c_n \exp(j\frac{2\pi nt}{P})\]
 
 Yearly and weekly seasonality is modelled using the standard Fourier
 series. Analysts can thus use prior knowledge to account for the effects
@@ -387,17 +386,18 @@ pattern but may have an effect on the price of a stock. Holidays and
 events are modelled using,
 
 \[ h(t) = \sum_{j = 1}^{L}\kappa_j \boldsymbol{1}(t \in D_j) \label{eqn5}
-\] Where, \(\kappa\) is normally distributed scaling factor and \(D_j\)
-is a set of past and future dates where holidays or events occur.
+\] Where, \(\kappa\) is a normally distributed scaling factor and
+\(D_j\) is a set of past and future dates where holidays or events
+occur.
 
 Prophet translates model parameter estimation into a curve-fitting
 exercise by employing Maximum Apriori Posterior (MAP) estimation, a
-quasi-Bayesian approach, to estimate the optimal parameter values for
-the forecasting model. MAP estimation finds the maximum posterior
-estimates for the parameters by using the likelihood function and an
-apriori distribution to find a posterior distribution which is optimized
-to return point estimates of the parameters (Taylor and Letham 2017).
-Thereafter, the package automatically evaluates the forecasts by
+Bayesian approach to estimating optimal parameter values for the
+forecasting model. MAP estimation finds the maximum posterior estimates
+for the parameters by using the likelihood function and an apriori
+distribution to evaluate a posterior distribution which is then
+optimized to return point estimates of the parameters (Taylor and Letham
+2017). Thereafter, the package automatically evaluates the forecasts by
 comparing the Simulated Historical Forecast (SHF) errors of baseline
 forecasting methods (including ARIMA forecasts) to those of Prophet. SHF
 errors are forecast errors generated from random points in the history
@@ -415,16 +415,16 @@ chosen for its recency and to avoid exposing the results to the noise
 associated with the high volatility experienced in the stock market
 during the 2008 financial crisis. The aim is to compare the predictive
 accuracy of the two models under standard market conditions before other
-confounding factors can be closely analysed. Figure 33 shows the actual
-realisations of the price index which was sourced from Datastream.
+confounding factors can be closely analysed. Figure 3 shows the actual
+realisations of the price index data which was sourced from Datastream.
 
 \includegraphics[width=1.00000\textwidth]{plot of Price index.png}\\
 \emph{Figure 3: Realisation of the FTSE/JSE Top40 Price Index over the
 period of study}
 
-The price index was transformation to log returns as a means of avoid
+The price index was transformed to log returns as a means of avoiding
 spurious regression issues which can be caused by the existence of unit
-roots in stock prices.
+roots in stock price data.
 
 In this paper, the \textbf{log return}(which will be used
 interchangeably with \textbf{return}), over the period \([t,t+1]\) is
@@ -440,9 +440,8 @@ Where \(P_t\) and \(P_{t+1}\) represent the price of the index at time
 Preliminary data processing was done to clean and transform the data
 before formally testing for outliers. The data was then split into
 in-sample and out-of-sample periods. The in-sample period comprises of
-1400 trading days from 30 July 2012 to the 1 May 2016. The
-out\_of\_sample period comprises of the remaining 366 trading days from
-the dataset.
+1400 trading days from 30 July 2012 to the 1 May 2016. The out-of-sample
+period comprises of the remaining 366 trading days from the dataset.
 
 The in-sample data was used to identify the ARIMA forecasting model
 using the method outlined by Box and Jenkins (1970) for building and
@@ -472,21 +471,22 @@ Selection}\label{box-jenkins-methodology-arima-model-identification-and-selectio
 
 To identify what ARIMA model to use, the methodology as outlined in Box
 and Jenkins (1970) was applied to the data. Firstly, stationarity
-conditions were verified formally by performing an augmented
+conditions were verified formally by performing an Augmented
 Dickey-Fuller test on the in-sample returns data. The results of the
 test suggest the p\_value is less that 1\%, which implies that the
 in-sample returns series is stationary. The results in the
 autocorrelation(ACF) and partial autocorrelation(PACF) function
-illustrated in figure 4 suggest that the second lag of both functions
+illustrated in Figure 4 suggest that the second lag of both functions
 might be significantly different from zero.\\
 \includegraphics[width=1.00000\textwidth]{acf \& pacf plot.png}\\
 \emph{Figure 4 : ACF and PACF plots for in-sample data}
 
-Therefore, the candidate \emph{ARIMA(p,d,q)} models in Table 1 were fit
-to the in-sample data and the AIC used to choose the model that best
-fits the data. In Table 1, the candidate model with the lowest AIC is
-the \(ARIMA(2,0,2)\). This model was thus selected as the ARIMA
-forecasting model.\\
+Observations from the above plots informed the choice of candidate
+\emph{ARIMA(p,d,q)} models to fit to the data. The candidate models that
+were fit to the in-sample data are shown in Table 1 with their
+respective AIC values. The candidate model with the lowest AIC is the
+\(ARIMA(2,0,2)\). This model was thus selected as the ARIMA forecasting
+model.\\
 \includegraphics[width=1.00000\textwidth]{AIC.png}\\
 \emph{Table 1: AIC for Candidate ARIMA models}
 
@@ -496,10 +496,10 @@ The results of model estimation and forecast evaluation using the
 rolling window for h-step forecasts yielded forecasts errors with
 roughly equal distributions. This is visible from the boxplot in Figure
 5. The presence of outliers seems consistent across the different models
-and forecastign horizons. Furthermore, the variation in the accuracy
-across different forecasting horizons for each model are not observable
-in Figure 5. The mean error and spread of both models across different
-time horizons appears to be constant.
+\textbf{and} forecasting horizons. Furthermore, variations in accuracy
+across different forecasting horizons \emph{for each} model is not
+observable in Figure 5. The mean error and spread of both models across
+different time horizons appears to be constant.
 \includegraphics[width=1.05000\textwidth]{Forecast error boxplot.png}\\
 \emph{Figure 5: Boxplot illustrating distribution of rolling forecast
 errors for different time horizons, h}
@@ -512,11 +512,11 @@ Prophet model across the three different time horizons.\\
 Across all forecast horizons, the ARIMA model appears to be
 overestimating returns. This is evident from the negative mean error(ME)
 across \(h = (1,5,20)\). On the contrary, the Prophet model
-underestimates the forecasts for one-step and five-step ahead forecasts.
-It then overstimates returns when forecasting twenty-steps ahead. The ME
-results shown in Table 2 fail to clearly illustrate which model performs
-better. Furthermore, the ME values are relatively small when compared
-against other error statistics.
+underestimates the forecasts for one-step and five-step ahead
+forecasting horizons. It then overstimates returns when forecasting
+twenty-steps ahead. The ME results shown in Table 2 fail to clearly
+illustrate which model performs better. Furthermore, the ME values are
+relatively small when compared against other error statistics.
 
 \includegraphics[width=1.00000\textwidth]{error stats.png}\\
 \emph{Table 2 : Forecast error diagnostic statistics over different
@@ -531,21 +531,21 @@ models possibly have the same forecasting accuracy.
 \subsubsection{Diebold-Mariano
 Evaluation}\label{diebold-mariano-evaluation-1}
 
-The observations made from Table 2 in section 5.2 suggest that the ARIMA
-and Prophet models have equal predictive accuracy. These assertions can
-be formally quantified through a Diebold-Mariano(DM) test which
-evaluates whether the models have equal predictive accuracy against the
-null hypothesis that one model has superior accuracy over the other.
-Table 3 reports the results obtained when the rolling forecast errors
-were formally compared against each other over different time
-horizons.\\
+The observations made from Table 2 in section 5.2.1 suggest that the
+ARIMA and Prophet models have equal predictive accuracy. These
+assertions can be formally quantified through a Diebold-Mariano(DM) test
+which evaluates whether the models have equal predictive accuracy
+against the alternative hypothesis that one model has superior accuracy
+over the other. Table 3 reports the results obtained when the rolling
+forecast errors were formally compared against each other over different
+time horizons.\\
 \includegraphics[width=1.05000\textwidth]{dm results.png}\\
 \emph{Table 3 Results of the Diebold-Mariano Hypothesis Test}\\
-The P-value across all the time horizons for either linear and quadratic
-loss functions suggest that we would fail to reject the null hypothesis
-which implies that the predictive accuracy of the models could be equal
-and the 95\% level. This observation validates the results obtained in
-section 5.2.
+The p-value across all the time horizons for either linear and quadratic
+loss functions suggest that we would fail to reject the null hypothesis.
+This implies that the predictive accuracy of the models could be equal.
+These results formally validate the observations made obtained in
+section 5.2.1.
 
 \section{Discussion of Results}\label{discussion-of-results}
 
@@ -564,14 +564,14 @@ analyst engaged in short-term strategies since the choice of the
 forecasting model can reflect a particular sentiment or risk appetite.
 For example, if the analyst feels like prevailing returns are
 underpriced by the market, they might choose to use an ARIMA model,
-whereas an opposite sentiment could warrant the use pf Prophet.\\
+whereas an opposite sentiment could warrant the use of Prophet.\\
 Furthermore, it is worth noting that the merits of Prophet may have not
-been fully exposed in this study due to the choice of the forecasting
-horizon, i.e.~excluding periods of high volatility and uncertainity
-during and after the 2008 Financial Crisis. Nonetheless, it is
-reassuring that the model has performed as well as the ARIMA model. This
-observation could create room for the application of Prophet in
-circumstances where flexibility in the model formulation is desireable.
+been fully exposed in this study due to the use of transformed data and
+the choice of a forecasting horizon that excluded periods of high
+volatility. Nonetheless, it is reassuring that the model has performed
+as well as the ARIMA model. This observation could create room for the
+application of Prophet in circumstances where flexibility in the model
+formulation is desireable.
 
 \section{Conclusion}\label{conclusion}
 
@@ -587,20 +587,20 @@ time. The functions' parameters are then estimated using Bayesian
 estimation methods after which the tool automatically executes forecast
 evaluation to optimize its predictive ability.\\
 The results of this study suggest that, using a Diebold-Mariano
-evaluation, ARIMA and Prophet do not have a significant difference in
-predictive accuracy, even across time horizons of up to a month. The
-implications of this are that analysts can then chosse which model to
-use based on their needs without significantly compromising forecast
-accuracy.\\
+evaluation, the ARIMA and Prophet forecasting models do not have a
+significant difference in predictive accuracy across time horizons of up
+to a month. The implications of this are that analysts can then choose
+which model to use based on their needs without significantly
+compromising forecast accuracy.\\
 This study was confined to the analysis of predictive performance during
 general market conditions. Further research could explore the predictive
-ability of the models during different market conditions.For example,
+ability of the models during different market conditions. For example,
 performance can be compared during bull and bear market conditions or
-during periods of high volatility. Furthermore, research can assess
-whether prophet would perform better on raw data that has not been
-transformed, since the model is built with growth and seasonality
-components and could thus predict better forecasts if these features are
-exploited.
+during periods of high volatility. Additionally, further research can
+assess whether prophet would perform better on raw data that has not
+been transformed, since the model is built with growth and seasonality
+components. This use of which could lead to Prophet models that generate
+superior forecasts when compared against alternatives.
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
