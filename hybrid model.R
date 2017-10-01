@@ -1,6 +1,14 @@
 #Comments
-# Model 1 is ARIMA
-# Model 2 is Prophet
+# The only significant test was the comparison between Prophet and... 
+#...the hybrid model when I used a 40:60 weighting (ARIMA:Prophet) for h = 1...
+#... the ARIMA model didn't differ from the hybrid model for the same case
+
+
+### Trying to get fraction from error/looking for a trend/pattern
+fracs <- abs(error2)/((abs(error1))+(abs(error2)))
+summary(fracs)
+hist(fracs)
+# By the  looks of the histogram, a 40:60 and/or 60:40 Weightings might be worth investigating but note that the mean frac is 50%
 
 
 #-----------------      a)   Hybrid Model (Equal weighting)      ------------------------
@@ -31,12 +39,6 @@ dm.test(results_20[,5],error_hybrid_20.a, h = 20)   # Arima vs Hybrid, p = 0.363
 dm.test(results_20[,6],error_hybrid_20.a, h = 20)   # Prophet vs Hybrid, p = 0.2534
 
 
-
-### Trying to get fraction from error/looking for a trend/pattern
-fracs <- abs(error2)/((abs(error1))+(abs(error2)))
-summary(fracs)
-hist(fracs)
-# By the  looks of the histogram, a 40:60 and/or 60:40 Weightings might be worth investigating but note that the mean frac is 50%
 
 # --------------- b) Hybrid Model (ARIMA:PROPHET) = (40:60)  -----------------------------
 
