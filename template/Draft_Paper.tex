@@ -564,9 +564,25 @@ which evaluates whether the models have equal predictive accuracy
 against the alternative hypothesis that one model has superior accuracy
 over the other. Table 3 reports the results obtained when the rolling
 forecast errors were formally compared against each other over different
-time horizons.\\
-\includegraphics[width=1.05000\textwidth]{dm results.png}\\
-\emph{Table 3 Results of the Diebold-Mariano Hypothesis Test}\\
+time horizons.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+  \hline
+Forecast Horizon, h & Loss Function & P Value \\ 
+  \hline
+1 & Linear & 0.553 \\ 
+    & Quadratic & 0.128 \\ 
+  5 & Linear & 0.691 \\ 
+    & Quadratic & 0.334 \\ 
+  20 & Linear & 0.660 \\ 
+    & Quadratic & 0.296 \\ 
+   \hline
+\end{tabular}
+\caption{Results of the Diebold-Mariano Hypothesis Test for different loss functions} 
+\end{table}
+
 The p-value across all the time horizons for either linear and quadratic
 loss functions suggest that we would fail to reject the null hypothesis.
 This implies that the predictive accuracy of the models could be equal.

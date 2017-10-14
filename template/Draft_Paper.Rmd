@@ -190,7 +190,7 @@ To identify what ARIMA model to use, the methodology as outlined in @box1970time
 Observations from the above plots informed the choice of candidate *ARIMA(p,d,q)* models to fit to the data. The candidate models that were fit to the in-sample data are shown in Table 1 with their respective AIC values. The candidate model with the lowest AIC is the $ARIMA(2,0,2)$. This model was thus selected as the ARIMA forecasting model.  
 
 
-```{r ShortTable, results = 'asis'}
+```{r AIC Table for candidate ARIMA Models, results = 'asis'}
 
 library(xtable)
 
@@ -226,7 +226,7 @@ Table 2 summarizes the forecast error statistics for both the ARIMA and Prophet 
 Across all forecast horizons, the ARIMA model appears to be overestimating returns. This is evident from the negative mean error(ME) across $h = (1,5,20)$. On the contrary, the Prophet model underestimates the forecasts for one-step and five-step ahead forecasting horizons. It then overstimates returns when forecasting twenty-steps ahead. The ME results shown in Table 2 fail to clearly illustrate which model performs better. Furthermore, the ME values are relatively small when compared against other error statistics.  
 
 
-```{r ForecastErrorStatisticsTable, results = 'asis'}
+```{r Forecast Error Statistics Table, results = 'asis'}
 
 library(xtable)
 
@@ -259,9 +259,36 @@ The Root Mean Square Error (RMSE) across different forecast horizons and across 
 
 ### Diebold-Mariano Evaluation
 
-The observations made from Table 2 in section 5.2.1 suggest that the ARIMA and Prophet models have equal predictive accuracy. These assertions can be formally quantified through a Diebold-Mariano(DM) test which evaluates whether the models have equal predictive accuracy against the alternative hypothesis that one model has superior accuracy over the other. Table 3 reports the results obtained when the rolling forecast errors were formally compared against each other over different time horizons.  
-![](dm results.png){ width=105%}  
-*Table 3 Results of the Diebold-Mariano Hypothesis Test*  
+The observations made from Table 2 in section 5.2.1 suggest that the ARIMA and Prophet models have equal predictive accuracy. These assertions can be formally quantified through a Diebold-Mariano(DM) test which evaluates whether the models have equal predictive accuracy against the alternative hypothesis that one model has superior accuracy over the other. Table 3 reports the results obtained when the rolling forecast errors were formally compared against each other over different time horizons. 
+
+```{r Table For Diebold Mariano Evaluation results, results = 'asis'}
+
+library(xtable)
+
+col1 <- c("1"," ","5"," ","20"," ")
+col2 <- rep(c("Linear","Quadratic"),3)
+col3 <- c(0.553,0.128,0.691,0.334,'0.660',0.296)
+
+
+dm.mat <- matrix(data = c(col1,col2,col3),ncol = 3)
+dimnames(dm.mat) <- list(c(" "," "," "," "," "," "),   #row names
+                          c("Forecast Horizon, h","Loss Function","P Value"))  #column names
+dm.data = dm.mat %>% tbl_df()
+
+
+dm.table <- xtable(dm.data, caption = "Results of the Diebold-Mariano Hypothesis Test for different loss functions")
+  print.xtable(dm.table, 
+             # tabular.environment = "longtable",
+             floating = TRUE,
+             table.placement = 'H', 
+             # scalebox = 0.3, 
+             comment = FALSE,
+             include.rownames = getOption("xtable.include.rownames", FALSE), #exclude row number
+             caption.placement = 'bottom'
+             )
+
+```
+
 The p-value across all the time horizons for either linear and quadratic loss functions suggest that we would fail to reject the null hypothesis. This implies that the predictive accuracy of the models could be equal. These results formally validate the observations made obtained in section 5.2.1.
 
 #Discussion of Results
