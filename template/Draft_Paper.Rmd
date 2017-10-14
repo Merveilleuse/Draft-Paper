@@ -128,14 +128,24 @@ Prophet translates model parameter estimation into a curve-fitting exercise by e
 
 #Data
 
-The data set used throughout this paper comprises of the daily closing prices of the equally-weighted FTSE/JSE Top40 price index for the five year period from 31/07/2012 to 30/07/2017. This equates to a total of 1766 trading days excluding weekends and holidays. This period was chosen for its recency and to avoid exposing the results to the noise associated with the high volatility experienced in the stock market during the 2008 financial crisis. The aim is to compare the predictive accuracy of the two models under standard market conditions before other confounding factors can be closely analysed.  Figure 3 shows the actual realisations of the price index data which was sourced from Datastream.
+The data set used throughout this paper comprises of the daily closing prices of the FTSE/JSE Top40 price index for the five year period from 31/07/2012 to 31/07/2017. This equates to a total of 1305 trading days excluding weekends and holidays. This period was chosen for its recency and to avoid exposing the results to the noise associated with the high volatility experienced in the stock market during the 2008 financial crisis. The aim is to compare the predictive accuracy of the two models under standard market conditions before other confounding factors can be closely analysed.  Figure 3 shows the actual realisations of the price index data which was sourced from Datastream.
 
-![Figure 2](plot of Price index.png){ width=100% }  
+```{r, echo=FALSE}
+#Import, transform and plot data
+library(dplyr)
+library(readxl)
+top40index <- read_excel("~/Honours_project/Draft-Paper/top40index.xlsx", 
+                         col_types = c("date", "numeric"))
+index <- top40index%>%distinct(date, .keep_all = TRUE) #Removing duplicate dates
+
+plot(index, type = "l",
+     main = "FTSE/JSE Top40 Index 07/2012 - 07/2017")
+```
 *Figure 3: Realisation of the FTSE/JSE Top40 Price Index over the period of study* 
   
 The price index was transformed to log returns as a means of avoiding spurious regression issues which can be caused by the existence of unit roots in stock price data.
 
-In this paper, the **log return**(which will be used interchangeably with **return**), over the period $[t,t+1]$ is denoted by $r_t$, and was calculated by evaluating;  
+In this paper, the **log return** (which will be used interchangeably with **return**), over the period $[t,t+1]$ is denoted by $r_t$, and was calculated by evaluating;  
 $$
 r_t = log(\frac{P_{t+1}}{P_t})  \label{eq1}
 $$  
@@ -144,7 +154,22 @@ Where $P_t$ and $P_{t+1}$ represent the price of the index at time $t$ and $t+1$
 #Methodology
 
 Preliminary data processing was done to clean and transform the data before formally testing for outliers. The data was then split into in-sample and out-of-sample periods. The in-sample period comprises of 1400 trading days from 30 July 2012 to the 1 May 2016. The out-of-sample period comprises of the remaining 366 trading days from the dataset.  
-  
+
+```{r, eval=FALSE}
+# Outliers
+boxplot(c(index[,2]), names = c("price index"), main = "Boxplot of Price Index")  #Comment : looks like there are some outliers eventhough outliers are 'relatively' clustered
+log.returns <- CalculateReturns(as.ts(top40index[,2]), method = "log")[-1] 
+boxplot(log.returns, names = c("log returns"), main = "Boxplot of Log Returns on the Price Index")
+
+#Formal tests for Outliers in Time series --------------------------
+
+library(tsoutliers)  # conducts multiple tests for outliers #Reference Chen and Liu;s as authors : https://stats.stackexchange.com/questions/104882/detecting-outliers-in-time-series-ls-ao-tc-using-tsoutliers-package-in-r-how
+library(ggpubr)
+log.returns.outlier.detection <- tsoutliers::tso(as.ts(log.returns),types = c("AO","IO","LS","TC","SLS"), maxit.iloop = 10)
+log.return.outlier.detection  #Several outliers detected
+#Further investigation shows that these outliers occur when the return is large in abs value, because this is due to natural market activity and the outliers do not reflect in the boxplot of the price index, the outliers have been kept in the data. See : log.returns[c(299,302,348,1144,1156,1540)]
+
+```  
   
 The in-sample data was used to identify the ARIMA forecasting model using the method outlined by @box1970time for building and estimating an ARIMA model.  
 Thereafter, one-step rolling forecasts with re-estimation as outlined by @RJHyndman2014 were evaluated for an automated Prophet model and the ARIMA model that was identified using the Box-Jenkins methodology. This procedure was then repeated for a 5-step and 20-step forecast horizon in order to determine whether the performance of the models vary when estimating weekly or monthly stock returns.
@@ -163,9 +188,33 @@ To identify what ARIMA model to use, the methodology as outlined in @box1970time
 
 
 Observations from the above plots informed the choice of candidate *ARIMA(p,d,q)* models to fit to the data. The candidate models that were fit to the in-sample data are shown in Table 1 with their respective AIC values. The candidate model with the lowest AIC is the $ARIMA(2,0,2)$. This model was thus selected as the ARIMA forecasting model.  
-![](AIC.png){ width=100% }  
-*Table 1: AIC for Candidate ARIMA models*  
 
+
+```{r ShortTable, results = 'asis'}
+
+library(xtable)
+
+candidate <- c("(0,0,0)","(2,0,0)","(0,0,2)","(2,0,2)")
+aic.values <- c(-8804,-8808,-8808,-8817)
+
+aic.mat <- matrix(data = c(candidate,aic.values),ncol = 2)
+dimnames(aic.mat) <- list(c(" "," "," "," "),   #row names
+                          c("ARIMA(p,d,q) model","AIC"))  #column names
+data = aic.mat %>% tbl_df()
+
+
+table <- xtable(data, caption = "AIC for Candidate ARIMA models")
+  print.xtable(table, 
+             # tabular.environment = "longtable",
+             floating = TRUE,
+             table.placement = 'H', 
+             # scalebox = 0.3, 
+             comment = FALSE,
+             include.rownames = getOption("xtable.include.rownames", FALSE), #exclude row number
+             caption.placement = 'bottom'
+             )
+
+```
 ## Forecast Error Evaluation
 The results of model estimation and forecast evaluation using the rolling window for h-step forecasts yielded forecasts errors with roughly equal distributions. This is visible from the boxplot in Figure 5. The presence of outliers seems consistent across the different models **and** forecasting horizons. Furthermore, variations in accuracy across different forecasting horizons *for each* model is not observable in Figure 5. The mean error and spread of both models across different time horizons appears to be constant. 
 ![](Forecast error boxplot.png){ width=105% }  
@@ -176,8 +225,35 @@ The results of model estimation and forecast evaluation using the rolling window
 Table 2 summarizes the forecast error statistics for both the ARIMA and Prophet model across the three different time horizons.  
 Across all forecast horizons, the ARIMA model appears to be overestimating returns. This is evident from the negative mean error(ME) across $h = (1,5,20)$. On the contrary, the Prophet model underestimates the forecasts for one-step and five-step ahead forecasting horizons. It then overstimates returns when forecasting twenty-steps ahead. The ME results shown in Table 2 fail to clearly illustrate which model performs better. Furthermore, the ME values are relatively small when compared against other error statistics.  
 
-![ErrorStats](error stats.png){ width=100% }  
-*Table  2 : Forecast error diagnostic statistics over different forecasting horizons*
+
+```{r ForecastErrorStatisticsTable, results = 'asis'}
+
+library(xtable)
+
+c1 <- c("1"," ","5"," ","20"," ")
+c2 <- rep(c("ARIMA","Prophet"),3)
+c3 <- c('-0.0004110','0.0000176','-0.0003635','0.004445','-0.0001769','-0.0000406')
+c4 <- c(0.0103,0.0104,0.0103,0.0103,0.0102,0.0102)
+c5 <- c(0.007718,0.007749,0.007692,0.007709,0.007649,"0.007660")
+
+error.stats.mat <- matrix(data = c(c1,c2,c3,c4,c5),ncol = 5)
+dimnames(error.stats.mat) <- list(c(" "," "," "," "," "," "),   #row names
+                          c("Forecast Horizon, h","Forecast Model"," ME ","RMSE","MAE"))  #column names
+err.stat.data = error.stats.mat %>% tbl_df()
+
+
+error.table <- xtable(err.stat.data, caption = "Forecast error diagnostic statistics over different forecasting horizons")
+  print.xtable(error.table, 
+             # tabular.environment = "longtable",
+             floating = TRUE,
+             table.placement = 'H', 
+             # scalebox = 0.3, 
+             comment = FALSE,
+             include.rownames = getOption("xtable.include.rownames", FALSE), #exclude row number
+             caption.placement = 'bottom'
+             )
+
+```
 
 The Root Mean Square Error (RMSE) across different forecast horizons and across both models are considerably close to each other in value relative to the other error statistics. The same observation can be made for the Mean Absolute Errors (MAE). These results suggest that the models possibly have the same forecasting accuracy. 
 
