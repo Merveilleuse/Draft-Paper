@@ -6,35 +6,17 @@
 
 
 #--------- i) Import, clean and transform data-----------------------------------
-
+library(dplyr)
 library(readxl)
-top40index <- read_excel("~/Honours_project/top40index.xlsx", 
+top40index <- read_excel("~/Honours_project/Draft-Paper/top40index.xlsx", 
                          col_types = c("date", "numeric"))
-
-#Data cleaning : removing duplicates
-index <- top40index[1:1827,]  #warning message is because data is being duplicated repeatedly. Duplicates start after row 1827
-attach(index)
-#head(index) 
-
-#Calculating log returns from price index
-library(PerformanceAnalytics)
-log.returns <- CalculateReturns(as.ts(index[,2]), method = "log")[-1][61:1826]  #reduced data set because it was taking too long to run rolling window forecasts
+index <- top40index%>%distinct(date, .keep_all = TRUE) #Removing duplicate dates
 
 
-
-#-------- ii) Exploratiory Data Analysis --------------------------------------
-
-#Basic plots for price index and log returns ----------------------
-plot(index, type = "l",
-     main = "FTSE/JSE Top40 Index 07/2010 - 04/2017")
-
-par(mfrow = c(1,2))
-plot(log.returns, type = "l", main = "Log return on Price Index 07/2010 - 07/2017")
-plot(density(log.returns, adjust = 3), main = "Distribution of Log-Returns on Price Index 07/2010 - 04/2017", col = 1, lty = 1) 
-par(mfrow = c(1,1))
-
-#Outliers
-boxplot(returns, log.returns, names = c("returns","log returns"), main = "Boxplots of Returns and Log Returns on full sample")  #Comment : looks like there are some outliers eventhough outliers are 'relatively' clustered
+# Outliers
+boxplot(c(index[,2]), names = c("price index"), main = "Boxplot of Price Index")  #Comment : looks like there are some outliers eventhough outliers are 'relatively' clustered
+log.returns <- CalculateReturns(as.ts(top40index[,2]), method = "log")[-1] 
+boxplot(log.returns, names = c("log returns"), main = "Boxplot of Log Returns on the Price Index")
 
 #Formal tests for Outliers in Time series --------------------------
 
@@ -42,15 +24,16 @@ library(tsoutliers)  # conducts multiple tests for outliers #Reference Chen and 
 library(ggpubr)
 log.returns.outlier.detection <- tsoutliers::tso(as.ts(log.returns),types = c("AO","IO","LS","TC","SLS"), maxit.iloop = 10)
 log.return.outlier.detection  #Several outliers detected
-#Further investigation shows that these outliers occur when return large in abs value. See : log.returns[c(299,302,348,1144,1156,1540)]
-
-
+#Further investigation shows that these outliers occur when the return is large in abs value, because this is due to natural market activity and the outliers do not reflect in the boxplot of the price index, the outliers have been kept in the data. See : log.returns[c(299,302,348,1144,1156,1540)]
 
 
 #-------- iii) ARIMA MODEL IDENTIFICATION : BOX-JENKINS METHODOLOGY -----------------------
+head(index)
 
-#Partitioning data into in-sample data
-in.samp.log.returns <- log.returns[1:1400]  #Code took too long to run. So we looked at 5 year period 
+#Partitioning in-sample and out-of-sample data
+library(PerformanceAnalytics)
+in.sample.data <- top40index %>% filter(between(date, as.POSIXct("2012-07-31"), as.POSIXct("2016-07-31")))
+in.samp.log.returns <- CalculateReturns(as.ts(in.sample.data[,2]), method = "log")[-1]  #reduced data set because it was taking too long to run rolling window forecasts
 
 #   Step 1: Formally testing stationarity/Unit root tests
 library(tseries)   #for Augmented Dickey-Fuller test
