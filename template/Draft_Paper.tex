@@ -177,7 +177,7 @@ its evolution from the standard form to more adaptable formulations
 the evolution of computational power and statistical advancement, other
 stock price prediction methods have been proposed, the most prominent
 being a machine learning approach called Artificial Neural
-Networks(ANNs)(Lin, Yang, and Song 2009). Also popular amongst the new
+Networks(ANNs) (Lin, Yang, and Song 2009). Also popular amongst the new
 stock price forecasting approaches are hybrids of existing methods that
 incorporate the benefits of different approaches.
 
@@ -262,18 +262,6 @@ the pure ANN which further reiterates the potential of incorporating an
 analysts knowledge to improve stock price forecasts, in both linear and
 nonlinear models.
 
-\subsubsection{Diebold-Mariano
-Evaluation}\label{diebold-mariano-evaluation}
-
-As is evident from the previous sections, the modelling approach and
-assumptions of Prophet differ to those of an ARIMA model. Since the two
-methods differ, the Diebold-Mariano evaluation (DM Test) is preferred as
-a means of testing forecasting accuracy. This is because the DM Test is
-a model free test of forecasting accuracy. It is applicable to a wide
-range of situations from multi-period forecasts, non-Gaussian forecast
-residuals, non-quadratic loss functions and even serially correlated
-data(Mariano 2000).
-
 \subsection{ARIMA Model Formulation}\label{arima-model-formulation}
 
 The ARIMA model is a generalisation of Autoregressive Moving Average
@@ -307,7 +295,7 @@ approaches tend to be inflexible with respect to incorporating prior
 information. Though this can be partially achieved by initializing
 parameter estimates for some methods (such as ANNs) ,an analyst with no
 statistical training can have difficulty interpreting and thus modifying
-parameter estimates(Taylor and Letham 2017).\\
+parameter estimates (Taylor and Letham 2017).\\
 Prophet is an \textbf{automatic forecasting} tool that uses a Bayesian
 Generalized Additive model to generate time series forecasts. This is in
 comparison to conventional methods such as the linear stochastic
@@ -404,6 +392,56 @@ errors are forecast errors generated from random points in the history
 of the time series model. In Prophet, SHF errors are compared visually
 to allow the analysts to easily adjust the interpretable parameters
 before automatically estimating the model and evaluating forecasts.
+
+\subsection{Diebold-Mariano
+Evaluation}\label{diebold-mariano-evaluation}
+
+As is evident from sections 2.2 and 2.3, the modelling approach and
+assumptions of Prophet differ to those of an ARIMA model. Since the two
+methods differ, the Diebold-Mariano evaluation is preferred as a means
+of comparing the forecast accuracy of the two different methods. The
+Diebold-Mariano evaluation is a \textbf{model free} hypothesis test for
+the equal predictive accuracy of two forecasting methods. It is
+applicable to a wide range of situations from forecast residuals that
+are non-Gaussian, asymmetric loss functions, serially correlated errors
+and multi-period forecasts (Mariano 2000). The Diebold-Mariano test (DM
+test) operates by evaluating the forecast errors for both model 1 and
+model 2 (i.e \(e_{t_1}\) and \(e_{t_2}\)) at a loss function
+\(g(\bullet)\). The loss function can be choosen flexibly as long as it
+is zero when the error is zero, is stricly positive for all values on
+the real line and it increases with an increase in the absolute value of
+the error size. The loss differential between two forecasts at time
+\(t\) is then defined by, \[ d_t =  g(e_{t1}) - g(e_{t2})\] for
+\(t = (1, 2, ..., M)\) where \(M\) is the total number of forecasts that
+have been generated from each model. We then test whethe,r
+\[ \mu = E[d_t] = 0 \] under the following hypothesis test;\\
+Null: \[ E[d_t] = 0  \,\,\,\, \forall t\]\\
+Alternative : \[ E[d_t] \neq 0 \]\\
+Test statistic:
+\[DM_{stat} = \frac{\sqrt M (\bar{d} - \mu)}{\sqrt{\hat{\gamma_d(0)}}} \]
+
+\(\bar{d}\) is the sample mean of the \(M\) loss differentials and
+\(\frac{\hat{\gamma_d(0)}}{M}\) is the asymptotic variance of
+(\(\bar{d} - \mu\)) with \(\hat{\gamma_d(k)}\) representing the
+autocovariance of the loss differential series at lag \(k=0\). The
+asymptotic distribution of \(DM_{stat}\) is then standard normal
+asumming the loss differential series is short memory and covariance
+stationary (Mariano 2000).\\
+There are two caveats to using the DM Test for the puposes of this
+paper. Firstly,both a linear and quadratic loss function was
+\textless{}\textless{}\textless{}\textless{}\textless{}\textless{}\textbf{correct
+the
+tense!!!!!}\textgreater{}\textgreater{}\textgreater{}\textgreater{}\textgreater{}
+used to conduct the DM Test since literature does not clearly stipulate
+which method is more reliable \textbf{CITE???}. Using either a linear or
+quadratic loss function implicitly assumes that the forecast errors are
+symmetric. The assumption which is a reasonable assumption since
+\textbf{\textless{}\textless{}\textless{}\textless{}\textless{}\textgreater{}\textgreater{}\textgreater{}\textgreater{}\textgreater{}\textgreater{}}.
+secondly, literature does not clearly stipulate what sample size is
+sufficient for the asymptotic distribution assumption to hold. In
+response to this, 20\% of the available data was used as the
+out-of-sample period. Nonethless, the DM test results must used
+conservatively .
 
 \section{Data}\label{data}
 
