@@ -50,7 +50,7 @@ In this section we will briefly review literature that relates to the comparison
 
 ARIMA models have been widely used as a standard model to forecast financial data and have been shown to yield acceptable forecasting errors [@adebiyi2014comparison]. @adebiyi2014comparison used the Box-Jenkins methodology to build short-term stock price prediction models for stocks on the New York Stock Exchange(NYSE) and the Nigerian Stock Exchange(NSE). Their results showed that the prediction errors of the model were within acceptable bounds.
 
-ARIMA models rely on the assumption that residuals are heteroskedastic(they have a constant variance) and normally distributed, however, some financial data displays heteroskedasticity making GARCH models more applicable. This theory is backed by a study conducted by @Muten2014 who compared the ability of ARIMA and GARCH models to forecast stock prices on the Zimbabwean Stock Exchange (ZSE). They found that the GARCH model outperforms the ARIMA model which suggests that the residuals are heteroskedastic. This is a case in point for emerging market stocks. The researchers noted that poor liquidity in the market could be a cause of the results they observed [@Muten2014].
+ARIMA models rely on the assumption that residuals are homoskedastic(they have a constant variance) and normally distributed, however, some financial data displays heteroskedasticity making GARCH models more applicable. This theory is backed by a study conducted by @Muten2014 who compared the ability of ARIMA and GARCH models to forecast stock prices on the Zimbabwean Stock Exchange (ZSE). They found that the GARCH model outperforms the ARIMA model which suggests that the residuals are heteroskedastic. This is a case in point for emerging market stocks. The researchers noted that poor liquidity in the market could be a cause of the results they observed [@Muten2014].
 
 ###Forecasting stock prices using alternative methods: The case of Artificial Neural Networks and Hybrid Models
 
@@ -129,8 +129,7 @@ Alternative : $$ E[d_t] \neq 0 $$
 Test statistic: $$DM_{stat} = \frac{\sqrt M (\bar{d} - \mu)}{\sqrt{\hat{\gamma_d(0)}}} $$
 
 $\bar{d}$ is the sample mean of the $M$ loss differentials and $\frac{\hat{\gamma_d(0)}}{M}$ is the asymptotic variance of  ($\bar{d} - \mu$) with $\hat{\gamma_d(k)}$ representing the autocovariance of the loss differential series at lag $k=0$. Asymptotically, the $DM_{stat}$ has a standard normal distribution if the loss differential series is short memory and covariance stationary [@Mariano2000].  
-There are two caveats to using the DM Test for the purposes of this paper. Firstly,both a linear and quadratic loss function was  <<<<<<**correct the tense!!!!!**>>>>> used to conduct the DM Test since literature does not clearly stipulate which method is more reliable **CITE???**. Using either a linear or quadratic loss function implicitly assumes that the forecast errors are symmetric. The assumption  which is a reasonable assumption since **<<<<<<JUSTIFY THE ASSUMPTION BY REFERENCING THE BOXPLOT WHERE ERRORS LOOKED SYMMETRIC >>>>>>>**. secondly, literature does not clearly stipulate what sample size is sufficient for the asymptotic distribution assumption to hold. In response to this, 20% of the available data was used as the out-of-sample period. Nonethless, the DM test results must used conservatively .
-
+There are two caveats to using the DM Test for the purposes of this paper. Firstly, the choice of the loss function depends on whether the forecast errors can be assumed to be symmetric or asymmetric. When the forecast errors are symmetric, a linear or quadratic loss function can be used to evaluate the loss differential. For forecast errors that are asymmetric, a loss fuction that satisfies the conditions outlined in the first part of this section can be used. Secondly, literature does not clearly stipulate the sample size range that is sufficient for the asymptotic distribution assumption to  hold. This implies that the DM test results must be used conservatively. <<<ASK HANJO IF HE KNOWS OF ANY PAPERS, I'VE BEEN OUT OF LUCK WITH MY SEARCH>>> 
 
 #Data
 
@@ -159,7 +158,7 @@ Where $P_t$ and $P_{t+1}$ represent the price of the index at time $t$ and $t+1$
 
 #Methodology
 
-Preliminary data processing was done to clean and transform the data before formally testing for outliers. The data was then split into in-sample and out-of-sample periods. The in-sample period comprises of 1400 trading days from 30 July 2012 to the 1 May 2016. The out-of-sample period comprises of the remaining 366 trading days from the dataset.  
+Preliminary data processing was done to clean and transform the data before formally testing for outliers. The data was then split into in-sample and out-of-sample periods. As was mentioned in section 2.4, literature does not clearly stipulate what sample size is sufficient for the asymptotic distribution assumption to hold. In response to this, 20% of the available data was used as the out-of-sample period. The in-sample period comprises of 1400 trading days from 30 July 2012 to the 30 June 2016 whereas the out-of-sample period comprises of the remaining 365 trading days from the dataset.  
 
 ```{r, eval=FALSE}
 # Outliers
@@ -183,7 +182,7 @@ Thereafter, one-step rolling forecasts with re-estimation as outlined by @RJHynd
 The forecasts generated above where then used to calculate **h-step rolling forecast errors** for both the ARIMA and Prophet models. For each time point $t$ in the out-of-sample period, the rolling forecast error is given by,  
 
 $$ \hat{e_t} = r_t - \hat{r_t},$$  where $r_t$ is the actual return and $\hat{r_t}$ is the rolling forecast at time $t$.  
-Summary statistics of the errors where used to compare the performance of the forecasting models before a formal statistical test was done using a Diebold-Mariano evaluation.
+Summary statistics of the errors where used to compare the performance of the forecasting models before a formal statistical test was done using the Diebold-Mariano evaluation with both a linear and quadratic loss function. Using either a linear or quadratic loss function implicitly assumes that the forecast errors are symmetric [@Mariano2000]. This assumption is reasonable given the apparent symmetry in the distribution of forecast errors as is evident from the boxplots in Figure 5.
 
 #Results
 ##Box-Jenkins Methodology: Arima Model Identification and Selection
@@ -193,7 +192,7 @@ To identify what ARIMA model to use, the methodology as outlined in @box1970time
 *Figure 4 : ACF and PACF plots for in-sample data*
 
 
-Observations from the above plots informed the choice of candidate *ARIMA(p,d,q)* models to fit to the data. The candidate models that were fit to the in-sample data are shown in Table 1 with their respective AIC values. The candidate model with the lowest AIC is the $ARIMA(2,0,2)$. This model was thus selected as the ARIMA forecasting model.  
+Observations from the above plots informed the choice of candidate *ARIMA(p,d,q)* models to fit to the data. The candidate models that were fit to the in-sample data are shown in Table 1 with their respective AIC values. The $ARIMA(2,0,2)$ model had the lowest AIC and was thus selected as the ARIMA forecasting model.  
 
 
 ```{r AIC Table for candidate ARIMA Models, results = 'asis'}
@@ -222,6 +221,8 @@ table <- xtable(data, caption = "AIC for Candidate ARIMA models")
 
 ```
 ## Forecast Error Evaluation
+
+>>>CONSIDER INSERTING THE FORECASTING PLOTS SOMEWHERE IN THIS SECTION HERE<<<<
 The results of model estimation and forecast evaluation using the rolling window for h-step forecasts yielded forecasts errors with roughly equal distributions. This is visible from the boxplot in Figure 5. The presence of outliers seems consistent across the different models **and** forecasting horizons. Furthermore, variations in accuracy across different forecasting horizons *for each* model is not observable in Figure 5. The mean error and spread of both models across different time horizons appears to be constant. 
 ![](Forecast error boxplot.png){ width=105% }  
 *Figure 5: Boxplot illustrating distribution of rolling forecast errors for different time horizons, h*  
