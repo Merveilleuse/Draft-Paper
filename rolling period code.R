@@ -41,8 +41,8 @@ adf.test(in.samp.log.returns) # p < 0.01 therefore we reject the null. Data is s
 
 #    Step 2: ACF and PACF plots for model identification
 par(mfrow = c(1,2))
-acf(in.samp.log.returns, main = "Autocorrelation Function for Log Returns")  #ma(2)
-pacf(in.samp.log.returns, main = "Partial Autocorrelation Function for Log Returns")  #ar(2), ar(30)
+plot1 <- acf(in.samp.log.returns, main = "Autocorrelation Function for Log Returns")  #ma(2)
+plot2 <- pacf(in.samp.log.returns, main = "Partial Autocorrelation Function for Log Returns")  #ar(2), ar(30)
 par(mfrow = c(1,1))
 #ma and ar(30) could be overfitting and since model is for forecasting, I want it to be parsimonious ->
 #looks like there could be seasonality but its below the bandwith 

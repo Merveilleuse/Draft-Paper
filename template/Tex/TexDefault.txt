@@ -46,7 +46,7 @@
 {\Huge \bf $title$}\\
 \today\\
 Marvelous Mubenesha ( $if(Student)$$Student$$endif$)\\
-{\tt $Student$@uct.co.za}
+{\tt $Student$@myuct.co.za}
 \end{center}
 
 \begin{abstract}
